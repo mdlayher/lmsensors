@@ -34,6 +34,8 @@ func parseSensors(raw map[string]map[string]string) ([]Sensor, error) {
 		switch {
 		case strings.HasPrefix(k, "intrusion"):
 			s = new(IntrusionSensor)
+		case strings.HasPrefix(k, "in"):
+			s = new(VoltageSensor)
 		case strings.HasPrefix(k, "fan"):
 			s = new(FanSensor)
 		case strings.HasPrefix(k, "temp"):

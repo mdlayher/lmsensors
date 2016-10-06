@@ -107,6 +107,33 @@ func TestScannerScan(t *testing.T) {
 					"/sys/devices/platform/it87.2608/fan1_min": {
 						contents: "10",
 					},
+					"/sys/devices/platform/it87.2608/in0_alarm": {
+						contents: "0",
+					},
+					"/sys/devices/platform/it87.2608/in0_beep": {
+						contents: "0",
+					},
+					"/sys/devices/platform/it87.2608/in0_input": {
+						contents: "1056",
+					},
+					"/sys/devices/platform/it87.2608/in0_max": {
+						contents: "3060",
+					},
+					"/sys/devices/platform/it87.2608/in1_alarm": {
+						contents: "0",
+					},
+					"/sys/devices/platform/it87.2608/in1_beep": {
+						contents: "0",
+					},
+					"/sys/devices/platform/it87.2608/in1_input": {
+						contents: "3384",
+					},
+					"/sys/devices/platform/it87.2608/in1_label": {
+						contents: "3VSB",
+					},
+					"/sys/devices/platform/it87.2608/in1_max": {
+						contents: "6120",
+					},
 					"/sys/devices/platform/it87.2608/intrusion0_alarm": {
 						contents: "1",
 					},
@@ -136,6 +163,21 @@ func TestScannerScan(t *testing.T) {
 						Beep:    true,
 						Current: 1010,
 						Minimum: 10,
+					},
+					&VoltageSensor{
+						Name:    "in0",
+						Alarm:   false,
+						Beep:    false,
+						Current: 1.056,
+						Maximum: 3.060,
+					},
+					&VoltageSensor{
+						Name:    "in1",
+						Label:   "3VSB",
+						Alarm:   false,
+						Beep:    false,
+						Current: 3.384,
+						Maximum: 6.120,
 					},
 					&IntrusionSensor{
 						Name:  "intrusion0",
