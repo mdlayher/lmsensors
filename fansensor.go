@@ -6,8 +6,7 @@ import (
 
 var _ Sensor = &FanSensor{}
 
-// A FanSensor is a Sensor that detects temperatures in degrees
-// Celsius.
+// A FanSensor is a Sensor that detects fan speeds in rotations per minute.
 type FanSensor struct {
 	// The name of the sensor.
 	Name string
