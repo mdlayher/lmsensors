@@ -107,6 +107,9 @@ func TestScannerScan(t *testing.T) {
 					"/sys/devices/platform/it87.2608/fan1_min": {
 						contents: "10",
 					},
+					"/sys/devices/platform/it87.2608/intrusion0_alarm": {
+						contents: "1",
+					},
 					"/sys/devices/platform/it87.2608/temp1_alarm": {
 						contents: "0",
 					},
@@ -133,6 +136,10 @@ func TestScannerScan(t *testing.T) {
 						Beep:    true,
 						Current: 1010,
 						Minimum: 10,
+					},
+					&IntrusionSensor{
+						Name:  "intrusion0",
+						Alarm: true,
 					},
 					&TemperatureSensor{
 						Name:    "temp1",
