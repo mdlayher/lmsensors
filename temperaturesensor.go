@@ -4,6 +4,21 @@ import (
 	"strconv"
 )
 
+// A TemperatureSensorType is value that indicates the type of a
+// TemperatureSensor.
+type TemperatureSensorType int
+
+// All possible TemperatureSensorType constants.
+const (
+	TemperatureSensorUnknown             TemperatureSensorType = 0
+	TemperatureSensorTypePIICeleronDiode TemperatureSensorType = 1
+	TemperatureSensorType3904Transistor  TemperatureSensorType = 2
+	TemperatureSensorTypeThermalDiode    TemperatureSensorType = 3
+	TemperatureSensorTypeThermistor      TemperatureSensorType = 4
+	TemperatureSensorTypeAMDAMDSI        TemperatureSensorType = 5
+	TemperatureSensorTypeIntelPECI       TemperatureSensorType = 6
+)
+
 var _ Sensor = &TemperatureSensor{}
 
 // A TemperatureSensor is a Sensor that detects temperatures in degrees
@@ -15,6 +30,16 @@ type TemperatureSensor struct {
 	// A label that describes what the sensor is monitoring.  Label may be
 	// empty.
 	Label string
+
+	// Whether or not the sensor has an alarm triggered.
+	Alarm bool
+
+	// Whether or not the sensor will sound an audible alarm if an alarm
+	// is triggered.
+	Beep bool
+
+	// The type of sensor used to report tempearatures.
+	Type TemperatureSensorType
 
 	// The current temperature, in degrees Celsius, indicated by the sensor.
 	Current float64
@@ -54,6 +79,17 @@ func (s *TemperatureSensor) parse(raw map[string]string) error {
 			case "max":
 				s.High = f
 			}
+		case "alarm":
+			s.Alarm = v != "0"
+		case "beep":
+			s.Beep = v != "0"
+		case "type":
+			t, err := strconv.Atoi(v)
+			if err != nil {
+				return err
+			}
+
+			s.Type = TemperatureSensorType(t)
 		case "crit_alarm":
 			s.CriticalAlarm = v != "0"
 		case "label":

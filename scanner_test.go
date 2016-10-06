@@ -107,12 +107,20 @@ func TestScannerScan(t *testing.T) {
 					"/sys/devices/platform/it87.2608/fan1_min": {
 						contents: "10",
 					},
-					// TODO(mdlayher): add additional temperature fields for this device
+					"/sys/devices/platform/it87.2608/temp1_alarm": {
+						contents: "0",
+					},
+					"/sys/devices/platform/it87.2608/temp1_beep": {
+						contents: "1",
+					},
 					"/sys/devices/platform/it87.2608/temp1_input": {
 						contents: "43000",
 					},
 					"/sys/devices/platform/it87.2608/temp1_max": {
 						contents: "127000",
+					},
+					"/sys/devices/platform/it87.2608/temp1_type": {
+						contents: "4",
 					},
 				},
 			},
@@ -128,6 +136,9 @@ func TestScannerScan(t *testing.T) {
 					},
 					&TemperatureSensor{
 						Name:    "temp1",
+						Alarm:   false,
+						Beep:    true,
+						Type:    TemperatureSensorTypeThermistor,
 						Current: 43.0,
 						High:    127.0,
 					},
