@@ -16,6 +16,90 @@ func TestScannerScan(t *testing.T) {
 		devices []*Device
 	}{
 		{
+			name: "power_meter device",
+			fs: &memoryFilesystem{
+				symlinks: map[string]string{
+					"/sys/class/hwmon/hwmon0":                                            "../../devices/LNXSYSTM:00/device:00/ACPI0000:00/hwmon/hwmon0",
+					"/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/hwmon/hwmon0/device": "../../../ACPI0000:00",
+				},
+				files: []memoryFile{
+					{
+						name: "/sys/class/hwmon",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/class/hwmon/hwmon0",
+						info: &memoryFileInfo{
+							mode: os.ModeSymlink,
+						},
+					},
+					{
+						name: "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/hwmon/hwmon0/name",
+						err:  os.ErrNotExist,
+					},
+					{
+						name: "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/hwmon/hwmon0/device",
+						info: &memoryFileInfo{
+						// TODO(mdlayher): why does this only work if this isn't a symlink,
+						// even though it is in the actual filesystem (and the actual filesystem
+						// exhibits the same behavior)?
+						// mode: os.ModeSymlink,
+						},
+					},
+					{
+						name:     "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/name",
+						contents: "power_meter",
+					},
+					{
+						name:     "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/power1_average",
+						contents: "345000000",
+					},
+					{
+						name:     "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/power1_average_interval",
+						contents: "1000",
+					},
+					{
+						name:     "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/power1_is_battery",
+						contents: "0",
+					},
+					{
+						name:     "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/power1_model_number",
+						contents: "Intel(R) Node Manager",
+					},
+					{
+						name:     "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/power1_oem_info",
+						contents: "Meter measures total domain",
+					},
+					{
+						name:     "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/power1_serial_number",
+						contents: "",
+					},
+				},
+			},
+			devices: []*Device{{
+				Name: "power_meter",
+				Sensors: []Sensor{
+					&PowerSensor{
+						Name:            "power1",
+						Average:         345.0,
+						AverageInterval: 1 * time.Second,
+						Battery:         false,
+						ModelNumber:     "Intel(R) Node Manager",
+						OEMInfo:         "Meter measures total domain",
+						SerialNumber:    "",
+					},
+				},
+			}},
+		},
+		{
 			name: "acpitz device",
 			fs: &memoryFilesystem{
 				symlinks: map[string]string{

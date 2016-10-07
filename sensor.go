@@ -38,6 +38,8 @@ func parseSensors(raw map[string]map[string]string) ([]Sensor, error) {
 			s = new(VoltageSensor)
 		case strings.HasPrefix(k, "fan"):
 			s = new(FanSensor)
+		case strings.HasPrefix(k, "power"):
+			s = new(PowerSensor)
 		case strings.HasPrefix(k, "temp"):
 			s = new(TemperatureSensor)
 		default:
