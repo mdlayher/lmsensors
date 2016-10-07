@@ -18,44 +18,84 @@ func TestScannerScan(t *testing.T) {
 		{
 			name: "coretemp device",
 			fs: &memoryFilesystem{
-				matches: []string{"/sys/devices/platform/coretemp.0/name"},
-				files: map[string]memoryFile{
-					"/sys/devices/platform/coretemp.0": {
+				symlinks: map[string]string{
+					"/sys/class/hwmon/hwmon1":                              "../../devices/platform/coretemp.0/hwmon/hwmon1",
+					"/sys/devices/platform/coretemp.0/hwmon/hwmon1/device": "../../../coretemp.0",
+				},
+				files: []memoryFile{
+					{
+						name: "/sys/class/hwmon",
 						info: &memoryFileInfo{
 							isDir: true,
 						},
 					},
-					"/sys/devices/platform/coretemp.0/name": {
+					{
+						name: "/sys/class/hwmon/hwmon1",
+						info: &memoryFileInfo{
+							mode: os.ModeSymlink,
+						},
+					},
+					{
+						name: "/sys/devices/platform/coretemp.0",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/devices/platform/coretemp.0/hwmon/hwmon1/name",
+						err:  os.ErrNotExist,
+					},
+					{
+						name: "/sys/devices/platform/coretemp.0/hwmon/hwmon1/device",
+						info: &memoryFileInfo{
+						// TODO(mdlayher): why does this only work if this isn't a symlink,
+						// even though it is in the actual filesystem (and the actual filesystem
+						// exhibits the same behavior)?
+						// mode: os.ModeSymlink,
+						},
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/name",
 						contents: "coretemp",
 					},
-					"/sys/devices/platform/coretemp.0/temp1_crit": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_crit",
 						contents: "100000",
 					},
-					"/sys/devices/platform/coretemp.0/temp1_crit_alarm": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_crit_alarm",
 						contents: "0",
 					},
-					"/sys/devices/platform/coretemp.0/temp1_input": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_input",
 						contents: "40000",
 					},
-					"/sys/devices/platform/coretemp.0/temp1_label": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_label",
 						contents: "Core 0",
 					},
-					"/sys/devices/platform/coretemp.0/temp1_max": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_max",
 						contents: "80000",
 					},
-					"/sys/devices/platform/coretemp.0/temp2_crit": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_crit",
 						contents: "100000",
 					},
-					"/sys/devices/platform/coretemp.0/temp2_crit_alarm": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_crit_alarm",
 						contents: "0",
 					},
-					"/sys/devices/platform/coretemp.0/temp2_input": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_input",
 						contents: "42000",
 					},
-					"/sys/devices/platform/coretemp.0/temp2_label": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_label",
 						contents: "Core 1",
 					},
-					"/sys/devices/platform/coretemp.0/temp2_max": {
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_max",
 						contents: "80000",
 					},
 				},
@@ -85,71 +125,120 @@ func TestScannerScan(t *testing.T) {
 		{
 			name: "it8728 device",
 			fs: &memoryFilesystem{
-				matches: []string{"/sys/devices/platform/it87.2608/name"},
-				files: map[string]memoryFile{
-					"/sys/devices/platform/it87.2608": {
+				symlinks: map[string]string{
+					"/sys/class/hwmon/hwmon2":                             "../../devices/platform/it87.2608/hwmon/hwmon2",
+					"/sys/devices/platform/it87.2608/hwmon/hwmon2/device": "../../../it87.2608",
+				},
+				files: []memoryFile{
+					{
+						name: "/sys/class/hwmon",
 						info: &memoryFileInfo{
 							isDir: true,
 						},
 					},
-					"/sys/devices/platform/it87.2608/name": {
+					{
+						name: "/sys/class/hwmon/hwmon2",
+						info: &memoryFileInfo{
+							mode: os.ModeSymlink,
+						},
+					},
+					{
+						name: "/sys/devices/platform/it87.2608",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/devices/platform/it87.2608/hwmon/hwmon2/name",
+						err:  os.ErrNotExist,
+					},
+					{
+						name: "/sys/devices/platform/it87.2608/hwmon/hwmon2/device",
+						info: &memoryFileInfo{
+						// TODO(mdlayher): why does this only work if this isn't a symlink,
+						// even though it is in the actual filesystem (and the actual filesystem
+						// exhibits the same behavior)?
+						// mode: os.ModeSymlink,
+						},
+					},
+					{
+						name:     "/sys/devices/platform/it87.2608/name",
 						contents: "it8728",
 					},
-					"/sys/devices/platform/it87.2608/fan1_alarm": {
+					{
+						name:     "/sys/devices/platform/it87.2608/fan1_alarm",
 						contents: "0",
 					},
-					"/sys/devices/platform/it87.2608/fan1_beep": {
+					{
+						name:     "/sys/devices/platform/it87.2608/fan1_beep",
 						contents: "1",
 					},
-					"/sys/devices/platform/it87.2608/fan1_input": {
+					{
+						name:     "/sys/devices/platform/it87.2608/fan1_input",
 						contents: "1010",
 					},
-					"/sys/devices/platform/it87.2608/fan1_min": {
+					{
+						name:     "/sys/devices/platform/it87.2608/fan1_min",
 						contents: "10",
 					},
-					"/sys/devices/platform/it87.2608/in0_alarm": {
+					{
+						name:     "/sys/devices/platform/it87.2608/in0_alarm",
 						contents: "0",
 					},
-					"/sys/devices/platform/it87.2608/in0_beep": {
+					{
+						name:     "/sys/devices/platform/it87.2608/in0_beep",
 						contents: "0",
 					},
-					"/sys/devices/platform/it87.2608/in0_input": {
+					{
+						name:     "/sys/devices/platform/it87.2608/in0_input",
 						contents: "1056",
 					},
-					"/sys/devices/platform/it87.2608/in0_max": {
+					{
+						name:     "/sys/devices/platform/it87.2608/in0_max",
 						contents: "3060",
 					},
-					"/sys/devices/platform/it87.2608/in1_alarm": {
+					{
+						name:     "/sys/devices/platform/it87.2608/in1_alarm",
 						contents: "0",
 					},
-					"/sys/devices/platform/it87.2608/in1_beep": {
+					{
+						name:     "/sys/devices/platform/it87.2608/in1_beep",
 						contents: "0",
 					},
-					"/sys/devices/platform/it87.2608/in1_input": {
+					{
+						name:     "/sys/devices/platform/it87.2608/in1_input",
 						contents: "3384",
 					},
-					"/sys/devices/platform/it87.2608/in1_label": {
+					{
+						name:     "/sys/devices/platform/it87.2608/in1_label",
 						contents: "3VSB",
 					},
-					"/sys/devices/platform/it87.2608/in1_max": {
+					{
+						name:     "/sys/devices/platform/it87.2608/in1_max",
 						contents: "6120",
 					},
-					"/sys/devices/platform/it87.2608/intrusion0_alarm": {
+					{
+						name:     "/sys/devices/platform/it87.2608/intrusion0_alarm",
 						contents: "1",
 					},
-					"/sys/devices/platform/it87.2608/temp1_alarm": {
+					{
+						name:     "/sys/devices/platform/it87.2608/temp1_alarm",
 						contents: "0",
 					},
-					"/sys/devices/platform/it87.2608/temp1_beep": {
+					{
+						name:     "/sys/devices/platform/it87.2608/temp1_beep",
 						contents: "1",
 					},
-					"/sys/devices/platform/it87.2608/temp1_input": {
+					{
+						name:     "/sys/devices/platform/it87.2608/temp1_input",
 						contents: "43000",
 					},
-					"/sys/devices/platform/it87.2608/temp1_max": {
+					{
+						name:     "/sys/devices/platform/it87.2608/temp1_max",
 						contents: "127000",
 					},
-					"/sys/devices/platform/it87.2608/temp1_type": {
+					{
+						name:     "/sys/devices/platform/it87.2608/temp1_type",
 						contents: "4",
 					},
 				},
@@ -231,40 +320,55 @@ var _ filesystem = &memoryFilesystem{}
 // A memoryFilesystem is an in-memory implementation of filesystem, used for
 // tests.
 type memoryFilesystem struct {
-	globCalled bool
-	matches    []string
-	files      map[string]memoryFile
-}
-
-func (fs *memoryFilesystem) Glob(_ string) ([]string, error) {
-	if !fs.globCalled {
-		fs.globCalled = true
-		return fs.matches, nil
-	}
-
-	return nil, nil
+	symlinks map[string]string
+	files    []memoryFile
 }
 
 func (fs *memoryFilesystem) ReadFile(filename string) (string, error) {
-	if f, ok := fs.files[filename]; ok {
-		return f.contents, nil
+	for _, f := range fs.files {
+		if f.name == filename {
+			return f.contents, nil
+		}
 	}
 
-	return "", fmt.Errorf("file %q not in memory", filename)
+	return "", fmt.Errorf("readfile: file %q not in memory", filename)
+}
+
+func (fs *memoryFilesystem) Readlink(name string) (string, error) {
+	if l, ok := fs.symlinks[name]; ok {
+		return l, nil
+	}
+
+	return "", fmt.Errorf("readlink: symlink %q not in memory", name)
+}
+
+func (fs *memoryFilesystem) Stat(name string) (os.FileInfo, error) {
+	for _, f := range fs.files {
+		if f.name == name {
+			info := f.info
+			if info == nil {
+				info = &memoryFileInfo{}
+			}
+
+			return info, f.err
+		}
+	}
+
+	return nil, fmt.Errorf("stat: file %q not in memory", name)
 }
 
 func (fs *memoryFilesystem) Walk(root string, walkFn filepath.WalkFunc) error {
-	if _, ok := fs.files[root]; !ok {
-		return fmt.Errorf("file %q not in memory", root)
+	if _, err := fs.Stat(root); err != nil {
+		return err
 	}
 
-	for k, v := range fs.files {
-		info := v.info
+	for _, f := range fs.files {
+		info := f.info
 		if info == nil {
 			info = &memoryFileInfo{}
 		}
 
-		if err := walkFn(k, info, nil); err != nil {
+		if err := walkFn(f.name, info, nil); err != nil {
 			return err
 		}
 	}
@@ -274,8 +378,10 @@ func (fs *memoryFilesystem) Walk(root string, walkFn filepath.WalkFunc) error {
 
 // A memoryFile is an in-memory file used by memoryFilesystem.
 type memoryFile struct {
+	name     string
 	contents string
 	info     os.FileInfo
+	err      error
 }
 
 var _ os.FileInfo = &memoryFileInfo{}

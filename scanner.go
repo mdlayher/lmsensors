@@ -9,9 +9,10 @@ import (
 
 // A filesystem is an interface to a filesystem, used for testing.
 type filesystem interface {
-	Glob(pattern string) ([]string, error)
-	Walk(root string, walkFn filepath.WalkFunc) error
 	ReadFile(filename string) (string, error)
+	Readlink(name string) (string, error)
+	Stat(name string) (os.FileInfo, error)
+	Walk(root string, walkFn filepath.WalkFunc) error
 }
 
 // A Scanner scans for Devices, so data can be read from their Sensors.
@@ -40,7 +41,11 @@ func (s *Scanner) Scan() ([]*Device, error) {
 		raw := make(map[string]map[string]string, 0)
 
 		// Walk filesystem paths to fetch devices and sensors
-		err := s.fs.Walk(filepath.Dir(p), func(path string, info os.FileInfo, err error) error {
+		err := s.fs.Walk(p, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
 			// Skip directories and anything that isn't a regular file
 			if info.IsDir() || !info.Mode().IsRegular() {
 				return nil
@@ -95,27 +100,75 @@ func (s *Scanner) Scan() ([]*Device, error) {
 	return devices, nil
 }
 
-// detectDevicePaths uses globbing to detect filesystem paths where devices
-// may reside on Linux.
+// detectDevicePaths performs a filesystem walk to paths where devices may
+// reside on Linux.
 func (s *Scanner) detectDevicePaths() ([]string, error) {
-	// Locations where device sensors typically reside in /sys on Linux
-	globs := []string{
-		"/sys/devices/platform/*/name",
-		"/sys/devices/platform/*/hwmon/hwmon*/name",
-		"/sys/devices/virtual/hwmon/*/name",
-	}
+	const lookPath = "/sys/class/hwmon"
 
 	var paths []string
-	for _, g := range globs {
-		matches, err := s.fs.Glob(g)
+	err := s.fs.Walk(lookPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		paths = append(paths, matches...)
-	}
+		// Skip anything that isn't a symlink
+		if info.Mode()&os.ModeSymlink == 0 {
+			return nil
+		}
 
-	return paths, nil
+		dest, err := s.fs.Readlink(path)
+		if err != nil {
+			return err
+		}
+		dest = filepath.Join(lookPath, filepath.Clean(dest))
+
+		// Symlink destination has a file called name, meaning a sensor exists
+		// here and data can be retrieved
+		fi, err := s.fs.Stat(filepath.Join(dest, "name"))
+		if err != nil && !os.IsNotExist(err) {
+			return err
+		}
+		if err == nil && fi.Mode().IsRegular() {
+			paths = append(paths, dest)
+		}
+
+		// Symlink destination has another symlink called device, which can be
+		// read and used to retrieve data
+		device := filepath.Join(dest, "device")
+		fi, err = s.fs.Stat(device)
+		if err != nil {
+			if os.IsNotExist(err) {
+				return nil
+			}
+
+			return err
+		}
+
+		if fi.Mode()&os.ModeSymlink != 0 {
+			return nil
+		}
+
+		device, err = s.fs.Readlink(device)
+		if err != nil {
+			return err
+		}
+		dest = filepath.Join(dest, filepath.Clean(device))
+
+		// Symlink destination has a file called name, meaning a sensor exists
+		// here and data can be retrieved
+		if _, err := s.fs.Stat(filepath.Join(dest, "name")); err != nil {
+			if os.IsNotExist(err) {
+				return nil
+			}
+
+			return err
+		}
+
+		paths = append(paths, dest)
+		return nil
+	})
+
+	return paths, err
 }
 
 // shouldSkip indicates if a given filename should be skipped during the
@@ -145,10 +198,6 @@ var _ filesystem = &systemFilesystem{}
 // filesystem.
 type systemFilesystem struct{}
 
-func (fs *systemFilesystem) Glob(pattern string) ([]string, error) {
-	return filepath.Glob(pattern)
-}
-
 func (fs *systemFilesystem) ReadFile(filename string) (string, error) {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -158,6 +207,8 @@ func (fs *systemFilesystem) ReadFile(filename string) (string, error) {
 	return strings.TrimSpace(string(b)), nil
 }
 
+func (fs *systemFilesystem) Readlink(name string) (string, error)  { return os.Readlink(name) }
+func (fs *systemFilesystem) Stat(name string) (os.FileInfo, error) { return os.Stat(name) }
 func (fs *systemFilesystem) Walk(root string, walkFn filepath.WalkFunc) error {
 	return filepath.Walk(root, walkFn)
 }
