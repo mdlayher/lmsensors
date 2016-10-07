@@ -130,6 +130,7 @@ func (s *Scanner) detectDevicePaths() ([]string, error) {
 		}
 		if err == nil && fi.Mode().IsRegular() {
 			paths = append(paths, dest)
+			return nil
 		}
 
 		// Symlink destination has another symlink called device, which can be

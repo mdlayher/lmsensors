@@ -16,6 +16,57 @@ func TestScannerScan(t *testing.T) {
 		devices []*Device
 	}{
 		{
+			name: "acpitz device",
+			fs: &memoryFilesystem{
+				symlinks: map[string]string{
+					"/sys/class/hwmon/hwmon0": "../../devices/virtual/hwmon/hwmon0",
+				},
+				files: []memoryFile{
+					{
+						name: "/sys/class/hwmon",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/class/hwmon/hwmon0",
+						info: &memoryFileInfo{
+							mode: os.ModeSymlink,
+						},
+					},
+					{
+						name: "/sys/devices/virtual/hwmon/hwmon0",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name:     "/sys/devices/virtual/hwmon/hwmon0/name",
+						contents: "acpitz",
+					},
+					{
+						name:     "/sys/devices/virtual/hwmon/hwmon0/temp1_crit",
+						contents: "105000",
+					},
+					{
+						name:     "/sys/devices/virtual/hwmon/hwmon0/temp1_input",
+						contents: "27800",
+					},
+				},
+			},
+			devices: []*Device{{
+				Name: "acpitz",
+				Sensors: []Sensor{
+					&TemperatureSensor{
+						Name:          "temp1",
+						Current:       27.8,
+						Critical:      105.0,
+						CriticalAlarm: false,
+					},
+				},
+			}},
+		},
+		{
 			name: "coretemp device",
 			fs: &memoryFilesystem{
 				symlinks: map[string]string{
