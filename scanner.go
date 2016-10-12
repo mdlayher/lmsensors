@@ -1,6 +1,7 @@
 package lmsensors
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -97,7 +98,23 @@ func (s *Scanner) Scan() ([]*Device, error) {
 		devices = append(devices, d)
 	}
 
+	renameDevices(devices)
 	return devices, nil
+}
+
+// renameDevices renames devices in place to prevent duplicate device names,
+// and to number each device.
+func renameDevices(devices []*Device) {
+	nameCount := make(map[string]int, 0)
+
+	for i := range devices {
+		name := devices[i].Name
+		devices[i].Name = fmt.Sprintf("%s-%02d",
+			name,
+			nameCount[name],
+		)
+		nameCount[name]++
+	}
 }
 
 // detectDevicePaths performs a filesystem walk to paths where devices may

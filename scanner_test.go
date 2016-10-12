@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 )
@@ -85,7 +86,7 @@ func TestScannerScan(t *testing.T) {
 				},
 			},
 			devices: []*Device{{
-				Name: "power_meter",
+				Name: "power_meter-00",
 				Sensors: []Sensor{
 					&PowerSensor{
 						Name:            "power1",
@@ -139,7 +140,7 @@ func TestScannerScan(t *testing.T) {
 				},
 			},
 			devices: []*Device{{
-				Name: "acpitz",
+				Name: "acpitz-00",
 				Sensors: []Sensor{
 					&TemperatureSensor{
 						Name:          "temp1",
@@ -236,7 +237,7 @@ func TestScannerScan(t *testing.T) {
 				},
 			},
 			devices: []*Device{{
-				Name: "coretemp",
+				Name: "coretemp-00",
 				Sensors: []Sensor{
 					&TemperatureSensor{
 						Name:          "temp1",
@@ -379,7 +380,7 @@ func TestScannerScan(t *testing.T) {
 				},
 			},
 			devices: []*Device{{
-				Name: "it8728",
+				Name: "it8728-00",
 				Sensors: []Sensor{
 					&FanSensor{
 						Name:    "fan1",
@@ -417,6 +418,207 @@ func TestScannerScan(t *testing.T) {
 					},
 				},
 			}},
+		},
+		{
+			name: "multiple coretemp devices",
+			fs: &memoryFilesystem{
+				symlinks: map[string]string{
+					"/sys/class/hwmon/hwmon1":                              "../../devices/platform/coretemp.0/hwmon/hwmon1",
+					"/sys/class/hwmon/hwmon2":                              "../../devices/platform/coretemp.1/hwmon/hwmon2",
+					"/sys/devices/platform/coretemp.0/hwmon/hwmon1/device": "../../../coretemp.0",
+					"/sys/devices/platform/coretemp.1/hwmon/hwmon2/device": "../../../coretemp.1",
+				},
+				files: []memoryFile{
+					{
+						name: "/sys/class/hwmon",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/class/hwmon/hwmon1",
+						info: &memoryFileInfo{
+							mode: os.ModeSymlink,
+						},
+					},
+					{
+						name: "/sys/class/hwmon/hwmon2",
+						info: &memoryFileInfo{
+							mode: os.ModeSymlink,
+						},
+					},
+					{
+						name: "/sys/devices/platform/coretemp.0",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/devices/platform/coretemp.0/hwmon/hwmon1/name",
+						err:  os.ErrNotExist,
+					},
+					{
+						name: "/sys/devices/platform/coretemp.0/hwmon/hwmon1/device",
+						info: &memoryFileInfo{
+						// TODO(mdlayher): why does this only work if this isn't a symlink,
+						// even though it is in the actual filesystem (and the actual filesystem
+						// exhibits the same behavior)?
+						// mode: os.ModeSymlink,
+						},
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/name",
+						contents: "coretemp",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_crit",
+						contents: "100000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_crit_alarm",
+						contents: "0",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_input",
+						contents: "40000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_label",
+						contents: "Core 0",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp1_max",
+						contents: "80000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_crit",
+						contents: "100000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_crit_alarm",
+						contents: "0",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_input",
+						contents: "42000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_label",
+						contents: "Core 1",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.0/temp2_max",
+						contents: "80000",
+					},
+					{
+						name: "/sys/devices/platform/coretemp.1",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/devices/platform/coretemp.1/hwmon/hwmon2/name",
+						err:  os.ErrNotExist,
+					},
+					{
+						name: "/sys/devices/platform/coretemp.1/hwmon/hwmon2/device",
+						info: &memoryFileInfo{
+						// TODO(mdlayher): why does this only work if this isn't a symlink,
+						// even though it is in the actual filesystem (and the actual filesystem
+						// exhibits the same behavior)?
+						// mode: os.ModeSymlink,
+						},
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/name",
+						contents: "coretemp",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp1_crit",
+						contents: "100000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp1_crit_alarm",
+						contents: "0",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp1_input",
+						contents: "38000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp1_label",
+						contents: "Core 0",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp1_max",
+						contents: "80000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp2_crit",
+						contents: "100000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp2_crit_alarm",
+						contents: "0",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp2_input",
+						contents: "37000",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp2_label",
+						contents: "Core 1",
+					},
+					{
+						name:     "/sys/devices/platform/coretemp.1/temp2_max",
+						contents: "80000",
+					},
+				},
+			},
+			devices: []*Device{
+				{
+					Name: "coretemp-00",
+					Sensors: []Sensor{
+						&TemperatureSensor{
+							Name:          "temp1",
+							Label:         "Core 0",
+							Current:       40.0,
+							High:          80.0,
+							Critical:      100.0,
+							CriticalAlarm: false,
+						},
+						&TemperatureSensor{
+							Name:          "temp2",
+							Label:         "Core 1",
+							Current:       42.0,
+							High:          80.0,
+							Critical:      100.0,
+							CriticalAlarm: false,
+						},
+					},
+				},
+				{
+					Name: "coretemp-01",
+					Sensors: []Sensor{
+						&TemperatureSensor{
+							Name:          "temp1",
+							Label:         "Core 0",
+							Current:       38.0,
+							High:          80.0,
+							Critical:      100.0,
+							CriticalAlarm: false,
+						},
+						&TemperatureSensor{
+							Name:          "temp2",
+							Label:         "Core 1",
+							Current:       37.0,
+							High:          80.0,
+							Critical:      100.0,
+							CriticalAlarm: false,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -498,6 +700,11 @@ func (fs *memoryFilesystem) Walk(root string, walkFn filepath.WalkFunc) error {
 	}
 
 	for _, f := range fs.files {
+		// Only walk paths under the specified root
+		if !strings.HasPrefix(f.name, root) {
+			continue
+		}
+
 		info := f.info
 		if info == nil {
 			info = &memoryFileInfo{}
