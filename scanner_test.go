@@ -609,6 +609,82 @@ func TestScannerScan(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "sfc device",
+			fs: &memoryFilesystem{
+				symlinks: map[string]string{
+					"/sys/class/hwmon/hwmon0":                                               "../../devices/pci0000:00/0000:00:02.0/0000:03:00.0/hwmon/hwmon0",
+					"/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0/hwmon/hwmon0/device": "../../../0000:03:00.0",
+				},
+				files: []memoryFile{
+					{
+						name: "/sys/class/hwmon",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/class/hwmon/hwmon0",
+						info: &memoryFileInfo{
+							mode: os.ModeSymlink,
+						},
+					},
+					{
+						name: "/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0",
+						info: &memoryFileInfo{
+							isDir: true,
+						},
+					},
+					{
+						name: "/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0/hwmon/hwmon0/name",
+						err:  os.ErrNotExist,
+					},
+					{
+						name: "/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0/hwmon/hwmon0/device",
+						info: &memoryFileInfo{
+						// mode: os.ModeSymlink,
+						},
+					},
+					{
+						name:     "/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0/name",
+						contents: "sfc",
+					},
+					{
+						name:     "/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0/curr1_alarm",
+						contents: "0",
+					},
+					{
+						name:     "/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0/curr1_crit",
+						contents: "18000",
+					},
+					{
+						name:     "/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0/curr1_input",
+						contents: "7624",
+					},
+					{
+						name:     "/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0/curr1_label",
+						contents: "0.9V supply current",
+					},
+					{
+						name:     "/sys/devices/pci0000:00/0000:00:02.0/0000:03:00.0/curr1_max",
+						contents: "16000",
+					},
+				},
+			},
+			devices: []*Device{{
+				Name: "sfc-00",
+				Sensors: []Sensor{
+					&CurrentSensor{
+						Name:     "curr1",
+						Label:    "0.9V supply current",
+						Alarm:    false,
+						Input:    7.624,
+						Maximum:  16.0,
+						Critical: 18.0,
+					},
+				},
+			}},
+		},
 	}
 
 	for _, tt := range tests {
