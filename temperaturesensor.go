@@ -41,8 +41,8 @@ type TemperatureSensor struct {
 	// The type of sensor used to report tempearatures.
 	Type TemperatureSensorType
 
-	// The current temperature, in degrees Celsius, indicated by the sensor.
-	Current float64
+	// The input temperature, in degrees Celsius, indicated by the sensor.
+	Input float64
 
 	// A high threshold temperature, in degrees Celsius, indicated by the
 	// sensor.
@@ -73,7 +73,7 @@ func (s *TemperatureSensor) parse(raw map[string]string) error {
 
 			switch k {
 			case "input":
-				s.Current = f
+				s.Input = f
 			case "crit":
 				s.Critical = f
 			case "max":

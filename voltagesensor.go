@@ -22,8 +22,8 @@ type VoltageSensor struct {
 	// is triggered.
 	Beep bool
 
-	// The current voltage indicated by the sensor.
-	Current float64
+	// The input voltage indicated by the sensor.
+	Input float64
 
 	// The maximum voltage threshold indicated by the sensor.
 	Maximum float64
@@ -46,7 +46,7 @@ func (s *VoltageSensor) parse(raw map[string]string) error {
 
 			switch k {
 			case "input":
-				s.Current = f
+				s.Input = f
 			case "max":
 				s.Maximum = f
 			}

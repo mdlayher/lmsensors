@@ -18,8 +18,8 @@ type FanSensor struct {
 	// below the minimum threshold.
 	Beep bool
 
-	// The current fan speed, in rotations per minute, indicated by the sensor.
-	Current int
+	// The input fan speed, in rotations per minute, indicated by the sensor.
+	Input int
 
 	// The low threshold fan speed, in rotations per minute, indicated by the
 	// sensor.
@@ -40,7 +40,7 @@ func (s *FanSensor) parse(raw map[string]string) error {
 
 			switch k {
 			case "input":
-				s.Current = i
+				s.Input = i
 			case "min":
 				s.Minimum = i
 			}

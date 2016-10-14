@@ -144,7 +144,7 @@ func TestScannerScan(t *testing.T) {
 				Sensors: []Sensor{
 					&TemperatureSensor{
 						Name:          "temp1",
-						Current:       27.8,
+						Input:         27.8,
 						Critical:      105.0,
 						CriticalAlarm: false,
 					},
@@ -242,7 +242,7 @@ func TestScannerScan(t *testing.T) {
 					&TemperatureSensor{
 						Name:          "temp1",
 						Label:         "Core 0",
-						Current:       40.0,
+						Input:         40.0,
 						High:          80.0,
 						Critical:      100.0,
 						CriticalAlarm: false,
@@ -250,7 +250,7 @@ func TestScannerScan(t *testing.T) {
 					&TemperatureSensor{
 						Name:          "temp2",
 						Label:         "Core 1",
-						Current:       42.0,
+						Input:         42.0,
 						High:          80.0,
 						Critical:      100.0,
 						CriticalAlarm: false,
@@ -386,14 +386,14 @@ func TestScannerScan(t *testing.T) {
 						Name:    "fan1",
 						Alarm:   false,
 						Beep:    true,
-						Current: 1010,
+						Input:   1010,
 						Minimum: 10,
 					},
 					&VoltageSensor{
 						Name:    "in0",
 						Alarm:   false,
 						Beep:    false,
-						Current: 1.056,
+						Input:   1.056,
 						Maximum: 3.060,
 					},
 					&VoltageSensor{
@@ -401,7 +401,7 @@ func TestScannerScan(t *testing.T) {
 						Label:   "3VSB",
 						Alarm:   false,
 						Beep:    false,
-						Current: 3.384,
+						Input:   3.384,
 						Maximum: 6.120,
 					},
 					&IntrusionSensor{
@@ -409,12 +409,12 @@ func TestScannerScan(t *testing.T) {
 						Alarm: true,
 					},
 					&TemperatureSensor{
-						Name:    "temp1",
-						Alarm:   false,
-						Beep:    true,
-						Type:    TemperatureSensorTypeThermistor,
-						Current: 43.0,
-						High:    127.0,
+						Name:  "temp1",
+						Alarm: false,
+						Beep:  true,
+						Type:  TemperatureSensorTypeThermistor,
+						Input: 43.0,
+						High:  127.0,
 					},
 				},
 			}},
@@ -582,7 +582,7 @@ func TestScannerScan(t *testing.T) {
 						&TemperatureSensor{
 							Name:          "temp1",
 							Label:         "Core 0",
-							Current:       40.0,
+							Input:         40.0,
 							High:          80.0,
 							Critical:      100.0,
 							CriticalAlarm: false,
@@ -590,7 +590,7 @@ func TestScannerScan(t *testing.T) {
 						&TemperatureSensor{
 							Name:          "temp2",
 							Label:         "Core 1",
-							Current:       42.0,
+							Input:         42.0,
 							High:          80.0,
 							Critical:      100.0,
 							CriticalAlarm: false,
@@ -603,7 +603,7 @@ func TestScannerScan(t *testing.T) {
 						&TemperatureSensor{
 							Name:          "temp1",
 							Label:         "Core 0",
-							Current:       38.0,
+							Input:         38.0,
 							High:          80.0,
 							Critical:      100.0,
 							CriticalAlarm: false,
@@ -611,7 +611,7 @@ func TestScannerScan(t *testing.T) {
 						&TemperatureSensor{
 							Name:          "temp2",
 							Label:         "Core 1",
-							Current:       37.0,
+							Input:         37.0,
 							High:          80.0,
 							Critical:      100.0,
 							CriticalAlarm: false,
