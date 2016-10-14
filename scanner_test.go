@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+// TODO(mdlayher): why does scanning work if device file isn't a symlink,
+// even though it is in the actual filesystem (and the actual filesystem
+// exhibits the same behavior)?
+
 func TestScannerScan(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -49,9 +53,6 @@ func TestScannerScan(t *testing.T) {
 					{
 						name: "/sys/devices/LNXSYSTM:00/device:00/ACPI0000:00/hwmon/hwmon0/device",
 						info: &memoryFileInfo{
-						// TODO(mdlayher): why does this only work if this isn't a symlink,
-						// even though it is in the actual filesystem (and the actual filesystem
-						// exhibits the same behavior)?
 						// mode: os.ModeSymlink,
 						},
 					},
@@ -184,9 +185,6 @@ func TestScannerScan(t *testing.T) {
 					{
 						name: "/sys/devices/platform/coretemp.0/hwmon/hwmon1/device",
 						info: &memoryFileInfo{
-						// TODO(mdlayher): why does this only work if this isn't a symlink,
-						// even though it is in the actual filesystem (and the actual filesystem
-						// exhibits the same behavior)?
 						// mode: os.ModeSymlink,
 						},
 					},
@@ -291,9 +289,6 @@ func TestScannerScan(t *testing.T) {
 					{
 						name: "/sys/devices/platform/it87.2608/hwmon/hwmon2/device",
 						info: &memoryFileInfo{
-						// TODO(mdlayher): why does this only work if this isn't a symlink,
-						// even though it is in the actual filesystem (and the actual filesystem
-						// exhibits the same behavior)?
 						// mode: os.ModeSymlink,
 						},
 					},
@@ -460,9 +455,6 @@ func TestScannerScan(t *testing.T) {
 					{
 						name: "/sys/devices/platform/coretemp.0/hwmon/hwmon1/device",
 						info: &memoryFileInfo{
-						// TODO(mdlayher): why does this only work if this isn't a symlink,
-						// even though it is in the actual filesystem (and the actual filesystem
-						// exhibits the same behavior)?
 						// mode: os.ModeSymlink,
 						},
 					},
@@ -523,9 +515,6 @@ func TestScannerScan(t *testing.T) {
 					{
 						name: "/sys/devices/platform/coretemp.1/hwmon/hwmon2/device",
 						info: &memoryFileInfo{
-						// TODO(mdlayher): why does this only work if this isn't a symlink,
-						// even though it is in the actual filesystem (and the actual filesystem
-						// exhibits the same behavior)?
 						// mode: os.ModeSymlink,
 						},
 					},
