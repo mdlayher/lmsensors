@@ -1,5 +1,7 @@
 package lmsensors
 
+import "encoding/json"
+
 var _ Sensor = &IntrusionSensor{}
 
 // An IntrusionSensor is a Sensor that detects when the machine's chassis
@@ -25,4 +27,9 @@ func (s *IntrusionSensor) parse(raw map[string]string) error {
 	}
 
 	return nil
+}
+
+func (s *IntrusionSensor) String() string {
+	b, _ := json.Marshal(s)
+	return string(b)
 }
