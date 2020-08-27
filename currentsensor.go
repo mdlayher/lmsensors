@@ -1,6 +1,7 @@
 package lmsensors
 
 import (
+	"encoding/json"
 	"strconv"
 )
 
@@ -59,4 +60,9 @@ func (s *CurrentSensor) parse(raw map[string]string) error {
 	}
 
 	return nil
+}
+
+func (s *CurrentSensor) String() string {
+	b, _ := json.Marshal(s)
+	return string(b)
 }

@@ -1,6 +1,7 @@
 package lmsensors
 
 import (
+	"encoding/json"
 	"strconv"
 )
 
@@ -52,4 +53,9 @@ func (s *FanSensor) parse(raw map[string]string) error {
 	}
 
 	return nil
+}
+
+func (s *FanSensor) String() string {
+	b, _ := json.Marshal(s)
+	return string(b)
 }
