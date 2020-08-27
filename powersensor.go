@@ -1,6 +1,7 @@
 package lmsensors
 
 import (
+	"encoding/json"
 	"strconv"
 	"time"
 )
@@ -69,4 +70,9 @@ func (s *PowerSensor) parse(raw map[string]string) error {
 	}
 
 	return nil
+}
+
+func (s *PowerSensor) String() string {
+	b, _ := json.Marshal(s)
+	return string(b)
 }
